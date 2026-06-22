@@ -1,31 +1,190 @@
 ---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+const posts = (await getCollection('blog'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 2);
 ---
 
 <!doctype html>
 <html lang="ru">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			.hero {
+				position: relative;
+				text-align: center;
+				padding: 6em 1em 4em;
+				background: radial-gradient(
+					ellipse 800px 400px at 50% 0%,
+					rgba(0, 212, 255, 12%),
+					transparent 70%
+				);
+				overflow: hidden;
+			}
+			.hero::before {
+				content: '';
+				position: absolute;
+				top: -2px;
+				left: 50%;
+				transform: translateX(-50%);
+				width: 140px;
+				height: 4px;
+				background: var(--accent);
+				box-shadow: 0 0 20px 2px rgba(0, 212, 255, 70%);
+			}
+			.hero h1 {
+				font-size: 4.5em;
+				margin: 0 0 0.3em 0;
+			}
+			.hero h1 .accent {
+				color: var(--accent);
+				text-shadow: 0 0 30px rgba(0, 212, 255, 50%);
+			}
+			.hero p {
+				max-width: 540px;
+				margin: 0 auto 2em;
+				color: rgb(var(--gray));
+				font-size: 1.1em;
+			}
+			.cta {
+				display: inline-block;
+				padding: 0.8em 2em;
+				border: 1px solid var(--accent);
+				border-radius: 4px;
+				color: var(--accent);
+				text-decoration: none;
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+				font-size: 0.9em;
+				transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+			}
+			.cta:hover {
+				background: var(--accent);
+				color: rgb(var(--gray-light));
+				box-shadow: 0 0 30px rgba(0, 212, 255, 50%);
+			}
+			.intro {
+				max-width: 640px;
+				margin: 0 auto;
+				padding: 4em 1em;
+				text-align: center;
+				color: rgb(var(--gray-dark));
+			}
+			.latest {
+				max-width: 960px;
+				margin: 0 auto;
+				padding: 0 1em 5em;
+			}
+			.latest h2 {
+				text-align: center;
+				font-size: 1.8em;
+				margin-bottom: 1.5em;
+				color: rgb(var(--gray));
+			}
+			.latest ul {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 2rem;
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			.latest li {
+				width: calc(50% - 1rem);
+				border-radius: 12px;
+				overflow: hidden;
+				background: rgb(var(--gray-light));
+				box-shadow: var(--box-shadow);
+				transition: transform 0.2s ease, box-shadow 0.2s ease;
+			}
+			.latest li:hover {
+				transform: translateY(-4px);
+				box-shadow: 0 0 0 1px rgba(0, 212, 255, 30%), var(--box-shadow);
+			}
+			.latest li a {
+				display: block;
+				text-decoration: none;
+			}
+			.latest li img {
+				margin: 0;
+				border-radius: 0;
+				display: block;
+				aspect-ratio: 16 / 9;
+				object-fit: cover;
+			}
+			.latest .card-body {
+				padding: 1.2em 1.4em 1.6em;
+			}
+			.latest .title {
+				margin: 0 0 0.4em;
+				font-size: 1.4em;
+				color: rgb(var(--black));
+			}
+			.latest .date {
+				margin: 0;
+				color: rgb(var(--gray));
+				font-size: 0.85em;
+				letter-spacing: 0.05em;
+				text-transform: uppercase;
+			}
+			@media (max-width: 720px) {
+				.hero {
+					padding: 4em 1em 3em;
+				}
+				.hero h1 {
+					font-size: 3em;
+				}
+				.latest li {
+					width: 100%;
+				}
+			}
+		</style>
 	</head>
 	<body>
 		<Header />
-		<main>
-			<h1>Снято на коленке</h1>
+		<section class="hero">
+			<h1>Снято <span class="accent">на коленке</span></h1>
 			<p>
 				Блог про то, как снимать короткометражные фильмы без большого бюджета и команды — от идеи
 				и сценария до съёмки на телефон и монтажа.
 			</p>
+			<a class="cta" href="/blog">Читать блог</a>
+		</section>
+		<main class="intro">
 			<p>
 				Здесь не будет рассказов про дорогую технику. Только то, что реально влияет на результат,
 				когда у вас один человек, один телефон и пара выходных.
 			</p>
-			<p>
-				Загляните в <a href="/blog">блог</a>, чтобы почитать разборы конкретных тем.
-			</p>
 		</main>
+		<section class="latest">
+			<h2>Последние записи</h2>
+			<ul>
+				{
+					posts.map((post) => (
+						<li>
+							<a href={`/blog/${post.id}/`}>
+								{post.data.heroImage && (
+									<Image width={480} height={270} src={post.data.heroImage} alt="" />
+								)}
+								<div class="card-body">
+									<h3 class="title">{post.data.title}</h3>
+									<p class="date">
+										<FormattedDate date={post.data.pubDate} />
+									</p>
+								</div>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</section>
 		<Footer />
 	</body>
 </html>

@@ -31,5 +31,11 @@ export default defineConfig({
 				],
 			},
 		},
+		{
+			provider: fontProviders.google(),
+			name: 'Bebas Neue',
+			cssVariable: '--font-display',
+			fallbacks: ['sans-serif'],
+		},
 	],
 });

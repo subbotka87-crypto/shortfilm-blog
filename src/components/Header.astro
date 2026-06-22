@@ -18,39 +18,44 @@ import HeaderLink from './HeaderLink.astro';
 		margin: 0;
 		padding: 0 1em;
 		background: rgb(var(--gray-light));
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 40%);
+		border-bottom: 1px solid rgba(0, 212, 255, 25%);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 50%);
 	}
 	h2 {
 		margin: 0;
-		font-size: 1em;
+		font-size: 1.4em;
+		letter-spacing: 0.08em;
 	}
 
-	h2 a,
-	h2 a.active {
+	h2 a {
+		color: rgb(var(--black));
 		text-decoration: none;
+	}
+	h2 a:hover {
+		color: var(--accent);
 	}
 	nav {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 	}
-	nav a {
-		padding: 1em 0.5em;
-		color: var(--black);
-		border-bottom: 4px solid transparent;
+	.internal-links a {
+		padding: 1.4em 0.7em;
+		display: inline-block;
+		color: rgb(var(--gray-dark));
+		border-bottom: 2px solid transparent;
 		text-decoration: none;
+		font-size: 0.85em;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		transition: color 0.2s ease, border-color 0.2s ease;
 	}
-	nav a.active {
-		text-decoration: none;
+	.internal-links a:hover {
+		color: var(--accent);
 		border-bottom-color: var(--accent);
 	}
-	.social-links,
-	.social-links a {
-		display: flex;
-	}
-	@media (max-width: 720px) {
-		.social-links {
-			display: none;
-		}
+	.internal-links a.active {
+		color: var(--accent);
+		border-bottom-color: var(--accent);
 	}
 </style>
